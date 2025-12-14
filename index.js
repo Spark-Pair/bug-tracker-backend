@@ -1,12 +1,12 @@
+const dotenv = require('dotenv');
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
-const dotenv = require('dotenv');
 const { User, Report } = require('./models');
-const admin = require('./firebaseAdmin');
 
 dotenv.config();
+const admin = require('./firebaseAdmin');
 const app = express();
 const PORT = process.env.PORT || 5000;
 const allowedOrigins = [
