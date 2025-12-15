@@ -23,7 +23,7 @@ app.use(cors({
   },
   credentials: true
 }));
-app.use(express.json({ limit: '500mb' }));
+app.use(express.json());
 
 // Firebase Admin
 if (!admin.apps.length) {
