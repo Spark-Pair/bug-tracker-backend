@@ -36,7 +36,7 @@ app.post('/users/fcm-token', async (req, res) => {
 });
 
 // Auth
-app.post('/auth/login', async (req, res) => {
+app.post('auth/login', async (req, res) => {
   try {
     const { username, password } = req.body;
     const user = await User.findOne({ username });
@@ -233,7 +233,7 @@ const connectDB = async () => {
     await mongoose.connect(process.env.MONGO_URI);
     console.log('✅ MongoDB Connected');
     await seedDatabase();
-    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+    app.listen(PORT, '0.0.0.0', () => console.log(`🚀 Server running on port ${PORT}`));
   } catch (err) {
     console.error(err.message);
     process.exit(1);
