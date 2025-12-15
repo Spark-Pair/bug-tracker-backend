@@ -36,7 +36,9 @@ app.post('/users/fcm-token', async (req, res) => {
 });
 
 // Auth
-app.post('auth/login', async (req, res) => {
+app.post('/auth/login', async (req, res) => {
+  return res.json({ error: 'Authentication is disabled in this demo.' });
+
   try {
     const { username, password } = req.body;
     const user = await User.findOne({ username });
