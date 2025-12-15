@@ -97,30 +97,31 @@ app.get('/reports/:id', async (req, res) => {
 // Create report & notify developers
 app.post('/reports', async (req, res) => {
   try {
-    const reportData = req.body;
-    const newReport = await Report.create({
-      ...reportData,
-      id: Math.random().toString(36).substr(2, 9),
-      status: 'open',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      comments: []
-    });
+    const report = await Report.create(req.body);
 
-    // Notify all developers
-    const devs = await User.find({ role: 'developer', fcmToken: { $ne: null } });
-    const messages = devs.map(d => ({
-      token: d.fcmToken,
-      notification: {
-        title: 'New Bug Reported',
-        body: `#${newReport.id}: ${newReport.app}`,
-      },
-      data: { reportId: newReport.id, type: 'new_report' }
-    }));
-    if (messages.length > 0) await admin.messaging().sendAll(messages);
+    // --------------------------
+    // Send notification to developers
+    // --------------------------
+    const developers = await User.find({ role: 'developer', fcmToken: { $exists: true } });
+    const tokens = developers.map(dev => dev.fcmToken);
 
-    res.json(newReport);
-  } catch (err) { res.status(500).json({ error: err.message }); }
+    if (tokens.length > 0) {
+      const message = {
+        notification: {
+          title: 'New Bug Reported',
+          body: `#${report.id}: ${report.app}`
+        },
+        tokens,
+      };
+
+      const messaging = getMessaging();
+      await messaging.sendMulticast(message);
+    }
+
+    res.json(report);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Update report status & notify creator
