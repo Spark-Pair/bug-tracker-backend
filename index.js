@@ -109,7 +109,7 @@ app.post('/reports', async (req, res) => {
       const message = {
         notification: {
           title: 'New Bug Reported',
-          body: `#${report.id}: ${report.app}`
+          body: `#${report._id}: ${report.app}`
         },
         tokens,
       };
