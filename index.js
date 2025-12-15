@@ -143,7 +143,14 @@ app.post('/reports', async (req, res) => {
         },
         tokens
       };
-      await admin.messaging().sendMulticast(message);
+      try {
+        if (tokens.length) {
+          const message = { notification: { title: 'New Bug', body: report.app }, tokens };
+          await admin.messaging().sendMulticast(message);
+        }
+      } catch (err) {
+        console.error('FCM sendMulticast error:', err.message);
+      }
     }
 
     res.json(report);
